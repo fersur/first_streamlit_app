@@ -33,6 +33,7 @@ streamlit.header("Fruityvice Fruit Advice!")
 
 # adding text field and notify user
 # fruit_choice = streamlit.text_input('What fruit would you like information about?')
+# fruit_choice2 = streamlit.text_input('What fruit would you like to add?','Jackfruit') # has default value
 # streamlit.write('The user entered ', fruit_choice)
 #fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
 #streamlit.text(fruityvice_response)
@@ -52,6 +53,11 @@ def get_fruit_list():
     with my_cnx.cursor() as my_cur:
             my_cur.execute("Select * from fruit_load_list")
             return my_cur.fetchall()    
+
+def insert_new_fruit(new_fruit):
+    with my_cnx.cursor() as my_cur:
+            my_cur.execute("insert into fruit_load_list values(new_fruit)")
+            return "Thanks for adding " +  new_fruit + " to the list."
 
 try:  
     fruit_choice = streamlit.text_input('What fruit would you like information about?')
@@ -80,11 +86,19 @@ if streamlit.button('Get fruit load list'):
     streamlit.dataframe(my_data_row)
 
 
-streamlit.stop()
+# streamlit.stop()
 
 #allow user to add fruit to the list
-fruit_choice2 = streamlit.text_input('What fruit would you like to add?','Jackfruit')
-streamlit.write('The user entered ', fruit_choice2)
+fruit_choice2 = streamlit.text_input('What fruit would you like to add?')
+# streamlit.write('Thanks for adding ', fruit_choice2)
 
 # This will not work correctly
-my_cur.execute("insert into fruit_load_list values('from_streamlit')")
+# my_cur.execute("insert into fruit_load_list values('from_streamlit')")
+# add a button
+if streamlit.button('Add a fruit to the list'):
+    my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"]) 
+    insert_fruit = insert_new_fruit(fruit_choice2)
+    streamlit.dataframe(my_data_row)
+
+
+streamlit.stop()
