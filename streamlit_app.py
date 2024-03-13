@@ -56,7 +56,7 @@ def get_fruit_list():
 
 def insert_new_fruit(new_fruit):
     with my_cnx.cursor() as my_cur:
-            my_cur.execute("insert into fruit_load_list values(new_fruit)")
+            my_cur.execute("insert into fruit_load_list values('from_streamlit too')")
             return "Thanks for adding " +  new_fruit + " to the list."
 
 try:  
@@ -88,17 +88,21 @@ if streamlit.button('Get fruit load list'):
 
 # streamlit.stop()
 
-#allow user to add fruit to the list
-fruit_choice2 = streamlit.text_input('What fruit would you like to add?')
-# streamlit.write('Thanks for adding ', fruit_choice2)
 
 # This will not work correctly
 # my_cur.execute("insert into fruit_load_list values('from_streamlit')")
 # add a button
-if streamlit.button('Add a fruit to the list'):
-    my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"]) 
-    insert_fruit = insert_new_fruit(fruit_choice2)
-    streamlit.dataframe(insert_fruit)
 
+#allow user to add fruit to the list
+try: 
+    fruit_choice2 = streamlit.text_input('What fruit would you like to add?')
+
+    if streamlit.button('Add a fruit to the list'):
+        my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"]) 
+        insert_fruit = insert_new_fruit(fruit_choice2)
+        streamlit.text(insert_fruit)
+        
+except URLError as e:
+  streamlit.error()
 
 streamlit.stop()
